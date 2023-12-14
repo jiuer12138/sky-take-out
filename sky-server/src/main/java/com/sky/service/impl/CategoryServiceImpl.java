@@ -44,6 +44,12 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.insert(category);
     }
 
+    /**
+     * 分类分页查询
+     *
+     * @param categoryPageQueryDTO
+     * @return
+     */
     @Override
     public PageResult query(CategoryPageQueryDTO categoryPageQueryDTO) {
         PageHelper.startPage(categoryPageQueryDTO.getPage(), categoryPageQueryDTO.getPageSize());
@@ -54,5 +60,33 @@ public class CategoryServiceImpl implements CategoryService {
         pageResult.setRecords(records);
         pageResult.setTotal(total);
         return pageResult;
+    }
+
+    /**
+     * 根据id设置状态
+     *
+     * @param id
+     * @param status
+     */
+    @Override
+    public void setStatus(Long id, Integer status) {
+        Category category = Category.builder()
+                .status(status)
+                .id(id)
+                .build();
+        //设置更新人id以及更新时间
+        category.setUpdateUser(BaseContext.getCurrentId());
+        category.setUpdateTime(LocalDateTime.now());
+        categoryMapper.update(category);
+    }
+
+    @Override
+    public void update(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO, category);
+        //设置更新人id以及更新时间
+        category.setUpdateUser(BaseContext.getCurrentId());
+        category.setUpdateTime(LocalDateTime.now());
+        categoryMapper.update(category);
     }
 }

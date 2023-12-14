@@ -36,4 +36,20 @@ public class CategoryController {
         return Result.success(pageResult);
     }
 
+    @PostMapping("/status/{status}")
+    @ApiOperation("根据id设置状态")
+    public Result setStatus(@PathVariable Integer status, Long id) {
+        log.info("根据id:{}设置状态:{}", id, status);
+        categoryService.setStatus(id, status);
+        return Result.success();
+    }
+
+
+    @PutMapping
+    @ApiOperation("修改分类")
+    public Result update(@RequestBody CategoryDTO categoryDTO) {
+        log.info("修改分类信息:{}", categoryDTO);
+        categoryService.update(categoryDTO);
+        return Result.success();
+    }
 }
