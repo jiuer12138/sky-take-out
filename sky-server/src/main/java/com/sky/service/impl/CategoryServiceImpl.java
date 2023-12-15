@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * 新增分类
      *
-     * @param categoryDTO
+     * @param categoryDTO categoryDTO
      */
     @Override
     public void add(CategoryDTO categoryDTO) {
@@ -47,8 +47,8 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * 分类分页查询
      *
-     * @param categoryPageQueryDTO
-     * @return
+     * @param categoryPageQueryDTO categoryPageQueryDTO
+     * @return 分类结果
      */
     @Override
     public PageResult query(CategoryPageQueryDTO categoryPageQueryDTO) {
@@ -65,8 +65,8 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * 根据id设置状态
      *
-     * @param id
-     * @param status
+     * @param id id
+     * @param status 状态
      */
     @Override
     public void setStatus(Long id, Integer status) {
@@ -80,6 +80,10 @@ public class CategoryServiceImpl implements CategoryService {
         categoryMapper.update(category);
     }
 
+    /**
+     * 修改分类信息
+     * @param categoryDTO categoryDTO
+     */
     @Override
     public void update(CategoryDTO categoryDTO) {
         Category category = new Category();
@@ -88,5 +92,15 @@ public class CategoryServiceImpl implements CategoryService {
         category.setUpdateUser(BaseContext.getCurrentId());
         category.setUpdateTime(LocalDateTime.now());
         categoryMapper.update(category);
+    }
+
+    /**
+     * 根据id删除分类
+     * @param id id
+     */
+    // TODO 后续删除分类还需同步删除分类关联的菜品
+    @Override
+    public void deleteById(Long id) {
+        categoryMapper.deleteById(id);
     }
 }
