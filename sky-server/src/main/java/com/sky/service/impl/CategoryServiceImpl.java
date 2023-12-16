@@ -65,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * 根据id设置状态
      *
-     * @param id id
+     * @param id     id
      * @param status 状态
      */
     @Override
@@ -82,6 +82,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 修改分类信息
+     *
      * @param categoryDTO categoryDTO
      */
     @Override
@@ -96,11 +97,22 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * 根据id删除分类
+     *
      * @param id id
      */
-    // TODO 后续删除分类还需同步删除分类关联的菜品
+    // TODO 后续删除分类还需判断分类是否关联的菜品或者套餐
     @Override
     public void deleteById(Long id) {
         categoryMapper.deleteById(id);
+    }
+
+    /**
+     * 根据类型获取list
+     * @param type type
+     * @return list
+     */
+    @Override
+    public List<Category> getListByType(Integer type) {
+        return categoryMapper.getListByType(type);
     }
 }
