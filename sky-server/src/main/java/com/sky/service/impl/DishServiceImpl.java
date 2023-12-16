@@ -36,6 +36,7 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
     /**
      * 添加菜品分类以及口味
      *
@@ -74,26 +75,38 @@ public class DishServiceImpl implements DishService {
     @Transactional
     public void deleteBatchByIds(List<Long> ids) {
         //判断当前菜品是否能够删除---是否存在起售中的菜品？？
-        for (Long id : ids) {
-           Dish dish = dishMapper.getById(id);
+        // for (Long id : ids) {
+        //    Dish dish = dishMapper.getById(id);
+        //     Integer status = dish.getStatus();
+        //     if (Objects.equals(status, StatusConstant.ENABLE)){
+        //        throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
+        //     }
+        // }
+
+        //判断当前菜品是否能够删除---是否存在起售中的菜品？？
+        List<Dish> dishes = dishMapper.getByIds(ids);
+        for (Dish dish : dishes) {
             Integer status = dish.getStatus();
-            if (Objects.equals(status, StatusConstant.ENABLE)){
+            if (Objects.equals(status, StatusConstant.ENABLE)) {
                 throw new DeletionNotAllowedException(MessageConstant.DISH_ON_SALE);
             }
         }
 
         //判断当前菜品是否能够删除---是否被套餐关联了？？
         List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(ids);
-        if (setmealIds!=null && !setmealIds.isEmpty()){
+        if (setmealIds != null && !setmealIds.isEmpty()) {
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
         //刪除菜品表中的菜品数据
-        for (Long id : ids) {
-            dishMapper.deletById(id);
-            //刪除菜品关联的口味数据
-            dishFlavorMapper.deleteByDishId(id);
-        }
+        //for (Long id : ids) {
+        //     dishMapper.deletById(id);
+        //    //刪除菜品关联的口味数据
+        //   dishFlavorMapper.deleteByDishId(id);
+        //}
 
-
+        //刪除菜品表中的菜品数据
+        dishMapper.deleteByIds(ids);
+        //刪除菜品关联的口味数据
+        dishFlavorMapper.deleteByDishIds(ids);
     }
 }
