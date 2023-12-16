@@ -50,7 +50,6 @@ public class CategoryServiceImpl implements CategoryService {
      * @param categoryPageQueryDTO categoryPageQueryDTO
      * @return 分类结果
      */
-    @Override
     public PageResult query(CategoryPageQueryDTO categoryPageQueryDTO) {
         PageHelper.startPage(categoryPageQueryDTO.getPage(), categoryPageQueryDTO.getPageSize());
         Page<Category> page = categoryMapper.pageQuery(categoryPageQueryDTO);
@@ -68,7 +67,6 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id     id
      * @param status 状态
      */
-    @Override
     public void setStatus(Long id, Integer status) {
         Category category = Category.builder()
                 .status(status)
@@ -85,7 +83,6 @@ public class CategoryServiceImpl implements CategoryService {
      *
      * @param categoryDTO categoryDTO
      */
-    @Override
     public void update(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
@@ -101,7 +98,6 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id id
      */
     // TODO 后续删除分类还需判断分类是否关联的菜品或者套餐
-    @Override
     public void deleteById(Long id) {
         categoryMapper.deleteById(id);
     }
@@ -111,7 +107,6 @@ public class CategoryServiceImpl implements CategoryService {
      * @param type type
      * @return list
      */
-    @Override
     public List<Category> getListByType(Integer type) {
         return categoryMapper.getListByType(type);
     }

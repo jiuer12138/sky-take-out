@@ -71,7 +71,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      *
      * @param employeeDTO
      */
-    @Override
     public void save(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
 
@@ -102,7 +101,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeePageQueryDTO
      * @return
      */
-    @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
         //分页查询
         PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
@@ -119,7 +117,6 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param status
      * @param id
      */
-    @Override
     public void setStatus(Integer status, Long id) {
         //  Employee employee = new Employee();
         //employee.setId(id);
@@ -132,14 +129,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     }
 
-    @Override
     public Employee getById(Long id) {
         Employee employee = employeeMapper.getById(id);
         employee.setPassword("******");
         return employee;
     }
 
-    @Override
     public void update(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);

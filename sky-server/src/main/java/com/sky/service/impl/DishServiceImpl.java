@@ -1,11 +1,16 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.dto.DishDTO;
+import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
+import com.sky.result.PageResult;
 import com.sky.service.DishService;
+import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,25 +28,34 @@ public class DishServiceImpl implements DishService {
 
     @Autowired
     private DishFlavorMapper dishFlavorMapper;
+
     /**
      * 添加菜品分类以及口味
+     *
      * @param dishDTO
      */
     @Transactional
     public void saveWithFlavor(DishDTO dishDTO) {
         //插入菜品相关信息
         Dish dish = new Dish();
-        BeanUtils.copyProperties(dishDTO,dish);
+        BeanUtils.copyProperties(dishDTO, dish);
         dishMapper.insert(dish);
 
         //获取生成的主键值
         Long id = dish.getId();
         //插入口味相关数据
         List<DishFlavor> flavors = dishDTO.getFlavors();
-        if (flavors!=null && !flavors.isEmpty()){
+        if (flavors != null && !flavors.isEmpty()) {
             flavors.forEach(dishFlavor -> dishFlavor.setDishId(id));
             dishFlavorMapper.insertBatch(flavors);
         }
 
+    }
+
+    public PageResult queryPage(DishPageQueryDTO dishPageQueryDTO) {
+        PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
+        //查询dish表和category表
+        Page<DishVO> dishVOS = dishMapper.queryPage(dishPageQueryDTO);
+        return new PageResult(dishVOS.getTotal(), dishVOS.getResult());
     }
 }
