@@ -65,6 +65,7 @@ public class CategoryController {
     }
 
     @GetMapping("/list")
+    @ApiOperation("根据类型获取下拉列表")
     public Result<List<Category>> list(Integer type) {
         log.info("根据type:{}查询list", type);
         List<Category> list = categoryService.getListByType(type);
