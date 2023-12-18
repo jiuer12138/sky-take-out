@@ -150,4 +150,13 @@ public class DishServiceImpl implements DishService {
         }
 
     }
+
+    /**
+     * 根据id设置状态
+     * @param status
+     * @param id
+     */
+    public void setStatusById(Integer status, Long id) {
+        dishMapper.setStatusById(status,id);
+    }
 }

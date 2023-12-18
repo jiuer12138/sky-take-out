@@ -58,9 +58,17 @@ public class DishController {
 
     @PutMapping
     @ApiOperation("修改菜品信息")
-    public Result update(@RequestBody DishDTO dishDTO){
-        log.info("修改菜品信息:{}",dishDTO);
+    public Result update(@RequestBody DishDTO dishDTO) {
+        log.info("修改菜品信息:{}", dishDTO);
         dishService.updateWithFlavors(dishDTO);
+        return Result.success();
+    }
+
+    @PostMapping("status/{status}")
+    @ApiOperation("设置菜品状态")
+    public Result setStatus(@PathVariable Integer status, Long id) {
+        log.info("根据id{}设置状态{}", id, status);
+        dishService.setStatusById(status,id);
         return Result.success();
     }
 }
