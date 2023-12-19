@@ -136,7 +136,7 @@ public class DishServiceImpl implements DishService {
     public void updateWithFlavors(DishDTO dishDTO) {
         // 更新菜品信息
         Dish dish = new Dish();
-        BeanUtils.copyProperties(dishDTO,dish);
+        BeanUtils.copyProperties(dishDTO, dish);
         dishMapper.update(dish);
         //更新相关的口味信息
         //先根据id删除口味信息
@@ -153,10 +153,21 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据id设置状态
+     *
      * @param status
      * @param id
      */
     public void setStatusById(Integer status, Long id) {
-        dishMapper.setStatusById(status,id);
+        dishMapper.setStatusById(status, id);
+    }
+
+    /**
+     * 根据分类id或者name获取菜品
+     * @param categoryId
+     * @param name
+     * @return
+     */
+    public List<Dish> getByCategoryIdOrName(Integer categoryId,String name) {
+        return dishMapper.getByCategoryIdOrName(categoryId,name);
     }
 }
