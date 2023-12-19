@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import java.util.List;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -25,4 +27,6 @@ public interface SetmealMapper {
     Setmeal getById(Long id);
 
     void update(Setmeal setmeal);
+
+    void deletBatchByIds(List<Long> ids);
 }
