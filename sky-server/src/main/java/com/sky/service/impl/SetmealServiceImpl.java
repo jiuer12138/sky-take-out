@@ -58,6 +58,58 @@ public class SetmealServiceImpl implements SetmealService {
         //开始分页
         PageHelper.startPage(setmealPageQueryDTO.getPage(), setmealPageQueryDTO.getPageSize());
         Page<SetmealVO> setmealVOS = setmealMapper.pageQuery(setmealPageQueryDTO);
-        return new PageResult(setmealVOS.getTotal(),setmealVOS.getResult());
+        return new PageResult(setmealVOS.getTotal(), setmealVOS.getResult());
+    }
+
+    /**
+     * 设置套餐状态
+     *
+     * @param id
+     * @param status
+     */
+    public void setStatus(Long id, Integer status) {
+        setmealMapper.setStatus(id, status);
+    }
+
+    /**
+     * 根据ID获取套餐以及关联菜品信息
+     *
+     * @param id
+     * @return
+     */
+    @Transactional
+    public SetmealVO getSetmealWithDish(Long id) {
+        //获取套餐基本信息
+        Setmeal setmeal = setmealMapper.getById(id);
+        //获取套餐关联的菜品信息
+        List<SetmealDish> setmealDishes = setmealDishMapper.getDishesBySetmealId(id);
+        //赋值给vo对象
+        SetmealVO setmealVO = new SetmealVO();
+        BeanUtils.copyProperties(setmeal, setmealVO);
+        setmealVO.setSetmealDishes(setmealDishes);
+
+        return setmealVO;
+    }
+
+    /**
+     * 更新套餐以及关联菜品信息
+     *
+     * @param setmealDTO
+     */
+    @Transactional
+    public void updateWithDishes(SetmealDTO setmealDTO) {
+        //更新套餐基本信息
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO, setmeal);
+        setmealMapper.update(setmeal);
+        //更新套餐关联的菜品信息
+        //先删除关联的菜品信息
+        setmealDishMapper.deleteBySetmealId(setmealDTO.getId());
+        //插入新的关联菜品信息并对dish_id赋值
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        setmealDishes.forEach(setmealDish -> {
+            setmealDish.setSetmealId(setmealDTO.getId());
+        });
+        setmealDishMapper.insertBatch(setmealDishes);
     }
 }
