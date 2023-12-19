@@ -4,3 +4,8 @@
 *.class
 *Test.java
 **/test/
+docker-compose/mysql/data/*
+docker-compose/mysql/logs/*
+docker-compose/redis/data/*
+docker-compose/nginx/logs/*
+docker-compose/redis/logs/*

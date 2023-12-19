@@ -1,0 +1,110 @@
+#表示注释
+
+# 指定我们docker-compose的版本
+version: "3"
+
+# 设置我们的服务
+services:
+
+  # 配置nignx服务
+  nginx:
+    # nginx最新镜像
+    image: nginx:latest
+    # 定义容器名称
+    container_name: nginx
+    # 配置nginx环境
+    environment:
+      - TZ=Asia/Shanghai
+    # 配置端口
+    ports:
+      - "80:80"
+    # 配置挂载的文件夹
+    volumes:
+      # nginx配置文件
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      # nginx静态文件
+      - ./nginx/html:/usr/share/nginx/html
+      # nginx日志
+      - ./nginx/logs:/var/log/nginx
+    # 自动重启
+    restart: always
+
+  # 配置mysql服务
+  mysql:
+
+    # 这里指定我们的镜像文件，mysql版本是5.7，这里要使用docker命令拉取镜像，这里先写着，后面我教大家怎么拉取镜像
+    image: mysql:latest
+    # 配置我们容器的名字
+    container_name: mysql
+    # 通过我们的宿主机的3306端口映射到容器里的3306端口，因为容器内的网络与我们外界是不互通的，只有宿主机能够去访问我们的容器，这样我们就能通过宿主机的3306端口去访问容器的mysql了
+    ports:
+      - "3306:3306"
+    # 配置环境，主要是配置我们的mysql的登陆密码，mysql容器创建出来默认可以用不同的ip地址访问，所以这里不用进行配置
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_DATABASE: sky_take_out
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_ROOT_HOST: '%'
+      # 等同于 -e MYSQL_ROOT_PASSWORD指定root的登录密码
+      #- MYSQL_ROOT_PASSWORD=123456a?
+      #- MYSQL_ALLOW_EMPTY_PASSWORD='no'
+      # 这里这个指令compose启动成功后会自动创建名为docker的数据库
+      #- MYSQL_DATABASE='ecdb02'
+      # 此处就是相当于 mysql create user，创建了数据库的登录用户
+      #- MYSQL_USER='ecuser'
+      #- MYSQL_PASSWORD='123456a?'
+
+      # 配置挂载的文件夹
+    volumes:
+      # 配置文件（conf.d mysql.conf.d my.cnf）
+      - ./mysql/conf/my.cnf:/etc/my.cnf
+      # mysql数据
+      - ./mysql/data:/var/lib/mysql
+      # 数据库日志
+      - ./mysql/logs:/var/log/mysql
+      # 初始化数据库
+      - ./mysql/init/init.sql:/docker-entrypoint-initdb.d/init.sql
+    # 设置命令
+    command:
+      [
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci',
+        # 这行代码解决无法访问的问题
+        '--default-authentication-plugin=mysql_native_password'
+      ]
+
+    # 自动重启
+    restart: always
+    # 加入指定网络，容器间必须要处于同一个网络才能通过容器名称进行调用
+    #networks:
+    #  - my_network
+
+  # 配置redis服务
+  redis:
+
+    # 设置容器对应的镜像
+    image: redis:latest
+    # 设置容器名
+    container_name: redis
+    # 配置环境
+    environment:
+      - TZ=Asia/Shanghai
+    # 同上，作为端口映射
+    ports:
+      - "6379:6379"
+    # 同上，挂载文件夹
+    volumes:
+      # 配置文件（需要在宿主机路径上传redis.conf文件）
+      - ./redis/conf/redis.conf:/etc/redis/redis.conf
+      # 数据
+      - ./redis/data:/data
+      # 日志
+      - ./redis/logs:/var/log/redis
+    # 设置命令
+    command: redis-server /etc/redis/redis.conf --appendonly yes --requirepass 123456
+    # 自动重启
+    restart: always
+    # 加入指定网络，容器间必须要处于同一个网络才能通过容器名称进行调用
+    #networks:
+    #  - my_network
+
