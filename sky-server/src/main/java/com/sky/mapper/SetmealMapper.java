@@ -29,4 +29,7 @@ public interface SetmealMapper {
     void update(Setmeal setmeal);
 
     void deletBatchByIds(List<Long> ids);
+
+    @Select("select * from setmeal where category_id = #{categoryId}")
+    List<Setmeal> getByCategoryId(Long categoryId);
 }

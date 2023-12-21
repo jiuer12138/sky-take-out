@@ -21,8 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -163,11 +166,44 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 根据分类id或者name获取菜品
+     *
      * @param categoryId
      * @param name
      * @return
      */
-    public List<Dish> getByCategoryIdOrName(Integer categoryId,String name) {
-        return dishMapper.getByCategoryIdOrName(categoryId,name);
+    public List<Dish> getByCategoryIdOrName(Integer categoryId, String name) {
+        return dishMapper.getByCategoryIdOrName(categoryId, name);
+    }
+
+    /**
+     * 根据分类id获取菜品以及口味信息
+     *
+     * @param categoryId
+     * @return
+     */
+    @Transactional
+    public List<DishVO> getWithFlavorByCategoryId(Long categoryId) {
+        ArrayList<DishVO> dishVOS = new ArrayList<>();
+        //获取菜品信息
+        List<Dish> dishes = dishMapper.getByCategoryId(categoryId);
+        ArrayList<Long> dishIds = new ArrayList<>();
+        dishes.forEach(dish -> {
+            dishIds.add(dish.getId());
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(dish,dishVO);
+            dishVOS.add(dishVO);
+        });
+
+        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishIds(dishIds);
+        //根据菜品id分组
+        Map<Long, List<DishFlavor>> collects = dishFlavors.stream().collect(
+                Collectors.groupingBy(
+                        DishFlavor::getDishId
+                )
+        );
+        dishVOS.forEach(dishVO -> {
+            dishVO.setFlavors(collects.get(dishVO.getId()));
+        });
+        return dishVOS;
     }
 }

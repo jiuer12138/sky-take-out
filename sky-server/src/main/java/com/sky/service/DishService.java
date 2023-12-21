@@ -56,9 +56,18 @@ public interface DishService {
 
     /**
      * 根据分类id或者name获取菜品
+     *
      * @param categoryId
      * @param name
      * @return
      */
-    List<Dish> getByCategoryIdOrName(Integer categoryId,String name);
+    List<Dish> getByCategoryIdOrName(Integer categoryId, String name);
+
+    /**
+     * 根据分类id获取菜品以及口味信息
+     *
+     * @param categoryId
+     * @return
+     */
+    List<DishVO> getWithFlavorByCategoryId(Long categoryId);
 }
