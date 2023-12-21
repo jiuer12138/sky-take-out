@@ -184,8 +184,12 @@ public class DishServiceImpl implements DishService {
     @Transactional
     public List<DishVO> getWithFlavorByCategoryId(Long categoryId) {
         ArrayList<DishVO> dishVOS = new ArrayList<>();
-        //获取菜品信息
-        List<Dish> dishes = dishMapper.getByCategoryId(categoryId);
+        //获取在售菜品信息
+        List<Dish> dishes = dishMapper.getByCategoryId(categoryId,StatusConstant.ENABLE);
+        //没有在售菜品
+        if (dishes.isEmpty()) {
+            return dishVOS;
+        }
         ArrayList<Long> dishIds = new ArrayList<>();
         dishes.forEach(dish -> {
             dishIds.add(dish.getId());
