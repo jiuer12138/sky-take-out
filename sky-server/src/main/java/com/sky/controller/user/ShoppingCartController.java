@@ -30,9 +30,25 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/add")
+    @ApiOperation("购物车新增")
     public Result add (@RequestBody ShoppingCartDTO shoppingCartDTO){
         log.info("购物车新增:{}",shoppingCartDTO);
         shoppingCartService.add(shoppingCartDTO);
+        return Result.success();
+    }
+
+    @DeleteMapping("/clean")
+    @ApiOperation("清空购物车")
+    public Result delete(){
+        log.info("清空购物车");
+        shoppingCartService.clean();
+        return Result.success();
+    }
+
+    @PostMapping("/sub")
+    public Result sub(@RequestBody ShoppingCartDTO shoppingCartDTO){
+        log.info("购物车减少:{}",shoppingCartDTO);
+        shoppingCartService.sub(shoppingCartDTO);
         return Result.success();
     }
 }

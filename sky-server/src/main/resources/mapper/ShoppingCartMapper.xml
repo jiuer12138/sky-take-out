@@ -7,8 +7,11 @@
         values (#{name}, #{image}, #{userId}, #{dishId}, #{setmealId}, #{dishFlavor}, #{number}, #{amount},
                 #{createTime})
     </insert>
+    <delete id="deleteCart">
+        delete from shopping_cart where user_id =#{userId} and id = #{id}
+    </delete>
 
-    <select id="getList" resultType="com.sky.entity.ShoppingCart">
+    <select id="list" resultType="com.sky.entity.ShoppingCart">
         select * from shopping_cart
         <where>
             <if test="userId != null">

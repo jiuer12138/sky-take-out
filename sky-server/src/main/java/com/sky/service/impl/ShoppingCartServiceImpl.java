@@ -27,13 +27,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Autowired
     private SetmealMapper setmealMapper;
+
     /**
      * 查看购物车
      *
      * @return
      */
     public List<ShoppingCart> list() {
-        return shoppingCartMapper.list();
+        Long userId = BaseContext.getCurrentId();
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUserId(userId);
+        return shoppingCartMapper.list(shoppingCart);
     }
 
     /**
@@ -44,27 +48,27 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public void add(ShoppingCartDTO shoppingCartDTO) {
         //判断当前加入到购物车中的商品是否已经存在了
         ShoppingCart shoppingCart = new ShoppingCart();
-        BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
+        BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
         //获取用户id
         Long userId = BaseContext.getCurrentId();
         shoppingCart.setUserId(userId);
-        List<ShoppingCart> list = shoppingCartMapper.getList(shoppingCart);
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
         //如果已经存在了，只需要将数量加一
-        if (list!=null && !list.isEmpty()){
+        if (list != null && !list.isEmpty()) {
             ShoppingCart cart = list.get(0);
-            cart.setNumber(cart.getNumber()+1);
+            cart.setNumber(cart.getNumber() + 1);
             //更新该数据
             shoppingCartMapper.update(cart);
-        }else {
+        } else {
             //如果不存在，需要插入一条购物车数据
 
             //判断是菜品还是套餐
-            if (shoppingCart.getDishId()!=null){//菜品
+            if (shoppingCart.getDishId() != null) {//菜品
                 Dish dish = dishMapper.getById(shoppingCart.getDishId());
                 shoppingCart.setName(dish.getName());
                 shoppingCart.setImage(dish.getImage());
                 shoppingCart.setAmount(dish.getPrice());
-            }else {
+            } else {
                 Setmeal setmeal = setmealMapper.getById(shoppingCart.getSetmealId());
                 shoppingCart.setName(setmeal.getName());
                 shoppingCart.setImage(setmeal.getImage());
@@ -73,6 +77,37 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCart.setNumber(1);
             shoppingCart.setCreateTime(LocalDateTime.now());
             shoppingCartMapper.insert(shoppingCart);
+        }
+
+    }
+
+    /**
+     * 清空购物车
+     */
+    public void clean() {
+        Long userId = BaseContext.getCurrentId();
+        shoppingCartMapper.deleteByUserId(userId);
+    }
+
+    /**
+     * 购物车减少
+     *
+     * @param shoppingCartDTO
+     */
+    public void sub(ShoppingCartDTO shoppingCartDTO) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
+        //设置用户id
+        shoppingCart.setUserId(BaseContext.getCurrentId());
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        ShoppingCart cart = list.get(0);
+        //如果有只有一份 删除
+        if (cart.getNumber()<=1){
+            shoppingCartMapper.deleteCart(cart);
+        }else {
+            //多份 数量减1
+            cart.setNumber(cart.getNumber()-1);
+            shoppingCartMapper.update(cart);
         }
 
     }
