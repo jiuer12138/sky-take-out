@@ -176,38 +176,28 @@ public class DishServiceImpl implements DishService {
     }
 
     /**
-     * 根据分类id获取菜品以及口味信息
+     * 条件查询菜品和口味
      *
-     * @param categoryId
+     * @param dish
      * @return
      */
-    @Transactional
-    public List<DishVO> getWithFlavorByCategoryId(Long categoryId) {
-        ArrayList<DishVO> dishVOS = new ArrayList<>();
-        //获取在售菜品信息
-        List<Dish> dishes = dishMapper.getByCategoryId(categoryId,StatusConstant.ENABLE);
-        //没有在售菜品
-        if (dishes.isEmpty()) {
-            return dishVOS;
-        }
-        ArrayList<Long> dishIds = new ArrayList<>();
-        dishes.forEach(dish -> {
-            dishIds.add(dish.getId());
-            DishVO dishVO = new DishVO();
-            BeanUtils.copyProperties(dish,dishVO);
-            dishVOS.add(dishVO);
-        });
+    public List<DishVO> listWithFlavor(Dish dish) {
+        List<Dish> dishList = dishMapper.list(dish);
 
-        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishIds(dishIds);
-        //根据菜品id分组
-        Map<Long, List<DishFlavor>> collects = dishFlavors.stream().collect(
-                Collectors.groupingBy(
-                        DishFlavor::getDishId
-                )
-        );
-        dishVOS.forEach(dishVO -> {
-            dishVO.setFlavors(collects.get(dishVO.getId()));
-        });
-        return dishVOS;
+        List<DishVO> dishVOList = new ArrayList<>();
+
+        for (Dish d : dishList) {
+            DishVO dishVO = new DishVO();
+            BeanUtils.copyProperties(d,dishVO);
+
+            //根据菜品id查询对应的口味
+            List<DishFlavor> flavors = dishFlavorMapper.getByDishId(d.getId());
+
+            dishVO.setFlavors(flavors);
+            dishVOList.add(dishVO);
+        }
+
+        return dishVOList;
     }
+
 }

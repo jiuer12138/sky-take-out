@@ -63,11 +63,12 @@ public interface DishService {
      */
     List<Dish> getByCategoryIdOrName(Integer categoryId, String name);
 
+
     /**
-     * 根据分类id获取菜品以及口味信息
+     * 条件查询菜品和口味
      *
-     * @param categoryId
+     * @param dish
      * @return
      */
-    List<DishVO> getWithFlavorByCategoryId(Long categoryId);
+    List<DishVO> listWithFlavor(Dish dish);
 }

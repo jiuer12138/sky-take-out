@@ -57,18 +57,17 @@ public interface SetmealService {
     void deleteWithDishesByIds(List<Long> ids);
 
     /**
-     * 根据分类categoryId获取套餐信息
-     *
-     * @param categoryId
-     * @return
-     */
-    List<Setmeal> getSetmealsByCategoryId(Long categoryId);
-
-    /**
      * 根据id查询菜品选项
      *
      * @param id
      * @return
      */
     List<DishItemVO> getDishItemById(Long id);
+
+    /**
+     * 获取list
+     * @param setmeal
+     * @return
+     */
+    List<Setmeal> list(Setmeal setmeal);
 }
