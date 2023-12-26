@@ -49,4 +49,7 @@ public interface OrderMapper {
      * @return
      */
     OrderStatisticsVO statistics();
+
+    @Select("select * from orders where id = #{id}")
+    Orders getById(Long id);
 }

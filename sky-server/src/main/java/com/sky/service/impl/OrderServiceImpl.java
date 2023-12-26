@@ -5,6 +5,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
@@ -19,6 +20,7 @@ import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -179,10 +181,33 @@ public class OrderServiceImpl implements OrderService {
      * @return
      */
     public OrderStatisticsVO statistics() {
-        //待派送数量--3 派送中数量--4 待接单数量--2
-//        map.put("toBeConfirmed",2);
-//        map.put("confirmed",3);
-//        map.put("deliveryInProgress",4);
         return orderMapper.statistics();
+    }
+
+    /**
+     * 根据id获取订单详情
+     *
+     * @param id
+     * @return
+     */
+    public OrderVO getById(Long id) {
+        OrderVO orderVO = new OrderVO();
+
+        Orders orders = orderMapper.getById(id);
+        BeanUtils.copyProperties(orders,orderVO);
+
+        List<OrderDetail> details = orderDetailMapper.getByOrderId(id);
+        orderVO.setOrderDetailList(details);
+
+        return orderVO;
+    }
+
+    /**
+     * 更新订单状态
+     *
+     * @param orders
+     */
+    public void update(Orders orders) {
+        orderMapper.update(orders);
     }
 }
