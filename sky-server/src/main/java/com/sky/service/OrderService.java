@@ -64,4 +64,12 @@ public interface OrderService {
      * @param orders
      */
     void update(Orders orders);
+
+    /**
+     * 用户端订单分页查询
+     *
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    PageResult page(OrdersPageQueryDTO ordersPageQueryDTO);
 }

@@ -208,6 +208,30 @@ public class OrderServiceImpl implements OrderService {
      * @param orders
      */
     public void update(Orders orders) {
+
         orderMapper.update(orders);
+    }
+
+    /**
+     * 用户端订单分页查询
+     *
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    public PageResult page(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(),ordersPageQueryDTO.getPageSize());
+        Page<Orders> list = orderMapper.pageQuery(ordersPageQueryDTO);
+        ArrayList<OrderVO>  orderVOS= new ArrayList<>();
+        if (list!=null && !list.isEmpty()){
+            List<Orders> result = list.getResult();
+            result.forEach(orders -> {
+                OrderVO orderVO = new OrderVO();
+                BeanUtils.copyProperties(orders,orderVO);
+                List<OrderDetail> details = orderDetailMapper.getByOrderId(orders.getId());
+                orderVO.setOrderDetailList(details);
+                orderVOS.add(orderVO);
+            });
+        }
+        return new PageResult(list.getTotal(),orderVOS);
     }
 }
