@@ -14,6 +14,12 @@
                 #{rejectionReason}, #{cancelTime}, #{estimatedDeliveryTime}, #{deliveryStatus}, #{deliveryTime},
                 #{packAmount}, #{tablewareNumber}, #{tablewareStatus})
     </insert>
+    <select id="statistics" resultType="com.sky.vo.OrderStatisticsVO">
+        select sum(IF(status = 2, 1, 0)) as toBeConfirmed,
+               sum(IF(status = 3, 1, 0)) as confirmed,
+               sum(IF(status = 4, 1, 0)) as deliveryInProgress
+        from orders
+    </select>
     <update id="update" parameterType="com.sky.entity.Orders">
         update orders
         <set>
@@ -44,4 +50,21 @@
         </set>
         where id = #{id}
     </update>
+    <select id="pageQuery" resultType="com.sky.entity.Orders">
+        select * from orders
+        <where>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="number != null">
+                and number = #{number}
+            </if>
+            <if test="phone != null">
+                and phone = #{phone}
+            </if>
+            <if test="beginTime != null and endTime!=null">
+                and order_time between #{beginTime} and #{endTime}
+            </if>
+        </where>
+    </select>
 </mapper>
